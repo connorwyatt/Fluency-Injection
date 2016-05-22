@@ -1,0 +1,12 @@
+.DS_Store
+.idea/
+node_modules/
+typings/
+coverage/
+
+index.js
+index.d.ts
+src/**/*.js
+src/**/*.d.ts
+test/**/*.js
+test/**/*.d.ts

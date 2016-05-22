@@ -1,0 +1,13 @@
+.DS_Store
+.npmignore
+.idea/
+node_modules/
+coverage/
+test/
+typings/
+tsconfig.json
+typings.json
+gulpfile.js
+
+index.ts
+src/main.ts
