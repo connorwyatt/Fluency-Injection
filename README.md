@@ -76,21 +76,31 @@ The output will be `'Hello'`.
 
 Sometimes you may need to inject an external library into a class (e.g. a logging framework).
 
-In order to do this, call the provide method with a token (can be any unique value) and the value you wish to provide to the classes that try to inject an instance of the library.
+In order to do this, call the provide method with a token (can be any unique value) and an object with either the value you wish to provide to the classes that try to inject using the token, or a factory function which be executed for each injection and must return the depedency.
 
 ```TypeScript
 import { Inject, bootstrap, provide } from 'fluency-injection';
 import * as externalLibrary from 'external-library';
+import * as anotherExternalLibrary from 'another-external-library';
 
-let Token = Symbol('token');
+let Token = Symbol('token'),
+  AnotherToken = Symbol('anotherToken');
 
 provide(Token, {
   useValue: externalLibrary
 });
 
+provide(AnotherToken, {
+  useFactory: () => {
+    return new anotherExternalLibrary();
+  }
+});
+
 class Main {
-  constructor(@Inject(Token) externalLibrary: any) {
+  constructor(@Inject(Token) externalLibrary: any,
+              @Inject(AnotherToken) anotherExternalLibrary: any) {
     console.log(externalLibrary); // Will be the value provided to the application using the provide method.
+    console.log(anotherExternalLibrary); // Will be the value returned by the factory function passed to the provide method.
   }
 }
 

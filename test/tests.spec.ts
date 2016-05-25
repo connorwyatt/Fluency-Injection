@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { expect } from 'chai';
-import { SinonSpy } from 'sinon';
+import { SinonSpy, SinonStub } from 'sinon';
 
 describe('DependencyInjection', function() {
   let bootstrap: (mainClass: any) => any,
@@ -97,37 +97,78 @@ describe('DependencyInjection', function() {
 
     context('with a decorated constructor parameter', function() {
       context('that has already been provided', function() {
-        let ClassWithDecoratedDependency: any,
-          classWithDecoratedDependencyConstructorSpy: SinonSpy,
-          ProvidedDependencyToken: symbol,
-          providedDependency: any;
+        context('as value', function() {
+          let ClassWithDecoratedDependency: any,
+            classWithDecoratedDependencyConstructorSpy: SinonSpy,
+            ProvidedDependencyToken: symbol,
+            valueProvidedDependency: any;
 
-        beforeEach(function() {
-          let classMock = require('./mocks/classWithDecoratedDependency.mock');
-          ClassWithDecoratedDependency = classMock.ClassWithDecoratedDependency;
-          classWithDecoratedDependencyConstructorSpy = classMock.classWithDecoratedDependencyConstructorSpy;
+          beforeEach(function() {
+            let classMock = require('./mocks/classWithDecoratedDependency.mock');
+            ClassWithDecoratedDependency = classMock.ClassWithDecoratedDependency;
+            classWithDecoratedDependencyConstructorSpy = classMock.classWithDecoratedDependencyConstructorSpy;
 
-          let providedDependencyMock = require('./mocks/providedDependency.mock');
-          ProvidedDependencyToken = providedDependencyMock.ProvidedDependencyToken;
-          providedDependency = providedDependencyMock.providedDependency;
+            let providedDependencyMock = require('./mocks/providedDependency.mock');
+            ProvidedDependencyToken = providedDependencyMock.ProvidedDependencyToken;
+            valueProvidedDependency = providedDependencyMock.valueProvidedDependency;
 
-          provide(ProvidedDependencyToken, {
-            useValue: providedDependency
+            provide(ProvidedDependencyToken, {
+              useValue: valueProvidedDependency
+            });
+
+            bootstrap(ClassWithDecoratedDependency);
           });
 
-          bootstrap(ClassWithDecoratedDependency);
+          it('should instantiate the class', function() {
+            expect(classWithDecoratedDependencyConstructorSpy.calledOnce).to.be.true;
+          });
+
+          it('should instantiate the class with one parameter', function() {
+            expect(classWithDecoratedDependencyConstructorSpy.firstCall.args.length).to.equal(1);
+          });
+
+          it('should instantiate the class with an instance of the dependency type', function() {
+            expect(classWithDecoratedDependencyConstructorSpy.firstCall.args[0]).to.equal(valueProvidedDependency);
+          });
         });
 
-        it('should instantiate the class', function() {
-          expect(classWithDecoratedDependencyConstructorSpy.calledOnce).to.be.true;
-        });
+        context('as factory', function() {
+          let ClassWithDecoratedDependency: any,
+            classWithDecoratedDependencyConstructorSpy: SinonSpy,
+            ProvidedDependencyToken: symbol,
+            factoryProvidedDependency: any,
+            factoryProvidedDependencyStub: SinonStub;
 
-        it('should instantiate the class with one parameter', function() {
-          expect(classWithDecoratedDependencyConstructorSpy.firstCall.args.length).to.equal(1);
-        });
+          beforeEach(function() {
+            let classMock = require('./mocks/classWithDecoratedDependency.mock');
+            ClassWithDecoratedDependency = classMock.ClassWithDecoratedDependency;
+            classWithDecoratedDependencyConstructorSpy = classMock.classWithDecoratedDependencyConstructorSpy;
 
-        it('should instantiate the class with an instance of the dependency type', function() {
-          expect(classWithDecoratedDependencyConstructorSpy.firstCall.args[0]).to.equal(providedDependency);
+            let providedDependencyMock = require('./mocks/providedDependency.mock');
+            ProvidedDependencyToken = providedDependencyMock.ProvidedDependencyToken;
+            factoryProvidedDependency = providedDependencyMock.factoryProvidedDependency;
+            factoryProvidedDependencyStub = providedDependencyMock.factoryProvidedDependencyStub;
+
+            factoryProvidedDependencyStub.returns(factoryProvidedDependency);
+
+            provide(ProvidedDependencyToken, {
+              useFactory: factoryProvidedDependencyStub
+            });
+
+            bootstrap(ClassWithDecoratedDependency);
+          });
+
+          it('should instantiate the class', function() {
+            expect(classWithDecoratedDependencyConstructorSpy.calledOnce).to.be.true;
+          });
+
+          it('should instantiate the class with one parameter', function() {
+            expect(classWithDecoratedDependencyConstructorSpy.firstCall.args.length).to.equal(1);
+          });
+
+          it('should instantiate the class with an instance of the dependency type', function() {
+            expect(classWithDecoratedDependencyConstructorSpy.firstCall.args[0]).to.equal(factoryProvidedDependency);
+          });
         });
       });
 
@@ -228,6 +269,18 @@ describe('DependencyInjection', function() {
         expect(function() {
           bootstrap(ClassWithoutInjectableDecorator);
         }).to.throw(Error, 'ClassWithoutInjectableDecorator');
+      });
+    });
+  });
+
+  describe('provide', function(){
+    context('when called', function() {
+      context('with no provide method', function() {
+        it('should throw an error', function() {
+          expect(function() {
+            provide(Symbol('should fail'), {});
+          }).to.throw(Error, 'Symbol(should fail)');
+        });
       });
     });
   });

@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-let dependencyStore: Map<any, any> = new Map<any, any>();
+let dependencyStore: Map<any, DependencyDefinition> = new Map<any, DependencyDefinition>();
 
 const $dependencies: string = '$dependencies';
 
@@ -9,19 +9,32 @@ export function bootstrap(mainClass: any): any {
 }
 
 export interface ProvideConfig {
+  useFactory?: () => any;
   useValue?: any;
 }
 
-export function provide(token: string|symbol, options: ProvideConfig): void {
-  let value: any;
+interface DependencyDefinition {
+  factory?: () => any;
+  value?: any;
+}
 
-  value = options.useValue;
+export function provide(token: any, options: ProvideConfig): void {
+  let dependencyDefinition: DependencyDefinition = {};
 
-  dependencyStore.set(token, value);
+  if (options.useValue) {
+    dependencyDefinition.value = options.useValue;
+  } else if (options.useFactory) {
+    dependencyDefinition.factory = options.useFactory;
+  } else {
+    let errorMessage = `No provide method has been chosen, cannot provide dependency '${ token.toString() }'.`;
+    throw new Error(errorMessage);
+  }
+
+  dependencyStore.set(token, dependencyDefinition);
 }
 
 export function Inject(token: any) {
-  return function(target: any, propertyKey: string | symbol, parameterIndex: number) {
+  return function(target: any, propertyKey: any, parameterIndex: number) {
     processDependency(token, target, parameterIndex);
   }
 }
@@ -58,14 +71,20 @@ function resolveDependency(token: any): any {
   let resolvedDependency: any;
 
   if (dependencyStore.has(token)) {
-    resolvedDependency = dependencyStore.get(token);
+    let dependencyDefinition: DependencyDefinition = dependencyStore.get(token);
+
+    if (dependencyDefinition.value) {
+      resolvedDependency = dependencyDefinition.value;
+    } else {
+      resolvedDependency = dependencyDefinition.factory();
+    }
   } else {
     resolvedDependency = instantiateClass(token);
-    dependencyStore.set(token, resolvedDependency);
+    dependencyStore.set(token, { value: resolvedDependency });
   }
 
   if (!resolvedDependency) {
-    let errorMessage = `Dependency '${token.toString()}' could not be found.`;
+    let errorMessage = `Dependency '${ token.toString() }' could not be found.`;
     throw new Error(errorMessage);
   }
 
