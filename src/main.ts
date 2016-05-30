@@ -26,7 +26,7 @@ export function provide(token: any, options: ProvideConfig): void {
   } else if (options.useFactory) {
     dependencyDefinition.factory = options.useFactory;
   } else {
-    let errorMessage = `No provide method has been chosen, cannot provide dependency '${ token.toString() }'.`;
+    let errorMessage = `No provide method has been chosen, cannot provide dependency '${ token && token.toString() }'.`;
     throw new Error(errorMessage);
   }
 
@@ -50,7 +50,7 @@ function getDependencies(target: any): Array<any> {
   let paramTypes = Reflect.getMetadata('design:paramtypes', target);
 
   if (!paramTypes) {
-    let errorMessage = `Parameter type metadata not available for '${target.name}', use the @Injectable decorator.`;
+    let errorMessage = `Parameter type metadata not available for '${ target.name }', use the @Injectable decorator.`;
     throw new Error(errorMessage);
   } else {
     return paramTypes.map((value: any, index: number) => {
@@ -84,7 +84,7 @@ function resolveDependency(token: any): any {
   }
 
   if (!resolvedDependency) {
-    let errorMessage = `Dependency '${ token.toString() }' could not be found.`;
+    let errorMessage = `Dependency '${ token && token.toString() }' could not be found.`;
     throw new Error(errorMessage);
   }
 
