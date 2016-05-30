@@ -185,7 +185,24 @@ describe('DependencyInjection', function() {
         it('should throw an error with the name of the missing token', function() {
           expect(function() {
             bootstrap(ClassWithDecoratedDependency);
-          }).to.throw(Error, 'Symbol(providedDependency)');
+          }).to.throw(Error, `Dependency 'Symbol(providedDependency)' could not be found.`);
+        });
+      });
+
+      context('that is undefined', function() {
+        let ClassWithUndefinedDecoratedDependency: any,
+          classWithUndefinedDecoratedDependencyConstructorSpy: SinonSpy;
+
+        beforeEach(function() {
+          let mock = require('./mocks/classWithUndefinedDecoratedDependency.mock');
+          ClassWithUndefinedDecoratedDependency = mock.ClassWithUndefinedDecoratedDependency;
+          classWithUndefinedDecoratedDependencyConstructorSpy = mock.classWithUndefinedDecoratedDependencyConstructorSpy;
+        });
+
+        it('should throw an error with the name of the missing token', function() {
+          expect(function() {
+            bootstrap(ClassWithUndefinedDecoratedDependency);
+          }).to.throw(Error, `Dependency 'undefined' could not be found.`);
         });
       });
     });
@@ -275,11 +292,19 @@ describe('DependencyInjection', function() {
 
   describe('provide', function(){
     context('when called', function() {
+      context('with no token', function() {
+        it('should throw an error', function() {
+          expect(function() {
+            provide(undefined, { useValue: null });
+          }).to.throw(Error, `No provide method has been chosen, cannot provide dependency 'undefined'`);
+        });
+      });
+
       context('with no provide method', function() {
         it('should throw an error', function() {
           expect(function() {
             provide(Symbol('should fail'), {});
-          }).to.throw(Error, 'Symbol(should fail)');
+          }).to.throw(Error, `No provide method has been chosen, cannot provide dependency 'Symbol(should fail)'`);
         });
       });
     });
