@@ -55,6 +55,7 @@ class TestDependency {
   }
 }
 
+@Injectable
 class Main {
   constructor(testDependency: TestDependency) {
     testDependency.sayHello();
@@ -79,7 +80,7 @@ Sometimes you may need to inject an external library into a class (e.g. a loggin
 In order to do this, call the provide method with a token (can be any unique value) and an object with either the value you wish to provide to the classes that try to inject using the token, or a factory function which be executed for each injection and must return the depedency.
 
 ```TypeScript
-import { Inject, bootstrap, provide } from 'fluency-injection';
+import { Inject, Injectable, bootstrap, provide } from 'fluency-injection';
 import * as externalLibrary from 'external-library';
 import * as anotherExternalLibrary from 'another-external-library';
 
@@ -96,6 +97,7 @@ provide(AnotherToken, {
   }
 });
 
+@Injectable
 class Main {
   constructor(@Inject(Token) externalLibrary: any,
               @Inject(AnotherToken) anotherExternalLibrary: any) {
@@ -127,6 +129,10 @@ import { Injectable } from 'fluency-injection';
 @Injectable
 class Dependency {}
 ```
+
+## Known Caveats
+
+- All classes must have a decorator of some form attached to them (or a property/method/param on them), otherwise the metadata will not be output correctly by TypeScript.
 
 ## Contact
 
