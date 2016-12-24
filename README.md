@@ -1,3 +1,7 @@
+[![npm](https://img.shields.io/npm/v/fluency-injection.svg)](https://www.npmjs.com/package/fluency-injection)
+[![npm](https://img.shields.io/npm/dm/fluency-injection.svg)](https://www.npmjs.com/package/fluency-injection)
+[![npm](https://img.shields.io/npm/dt/fluency-injection.svg)](https://www.npmjs.com/package/fluency-injection)
+
 # Fluency Injection
 A TypeScript dependency injection framework for Node.js, inspired by Angular2 dependency injection using decorators.
 
