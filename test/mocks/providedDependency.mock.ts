@@ -1,6 +1,7 @@
 import { SinonStub, stub } from 'sinon';
 
-export const ProvidedDependencyToken = Symbol('providedDependency');
+// Would use Symbol() in ES6, string in ES5
+export const ProvidedDependencyToken = 'providedDependency';
 
 export const valueProvidedDependency = {
   name: 'providedDependency'

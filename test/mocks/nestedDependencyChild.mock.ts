@@ -6,6 +6,7 @@ export const nestedDependencyChildConstructorSpy: SinonSpy = spy();
 @Injectable
 export class NestedDependencyChild {
   constructor() {
-    nestedDependencyChildConstructorSpy(...arguments);
+    const args = arguments as any;
+    nestedDependencyChildConstructorSpy(...args);
   }
 }

@@ -6,6 +6,7 @@ export const typedDependencyConstructorSpy: SinonSpy = spy();
 @Injectable
 export class TypedDependency {
   constructor() {
-    typedDependencyConstructorSpy(...arguments);
+    const args = arguments as any;
+    typedDependencyConstructorSpy(...args);
   }
 }

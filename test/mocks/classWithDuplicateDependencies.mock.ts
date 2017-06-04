@@ -7,6 +7,7 @@ export const classWithDuplicateDependenciesConstructorSpy: SinonSpy = spy();
 @Injectable
 export class ClassWithDuplicateDependencies {
   constructor(dependency1: DuplicateDependency, dependency2: DuplicateDependency) {
-    classWithDuplicateDependenciesConstructorSpy(...arguments);
+    const args = arguments as any;
+    classWithDuplicateDependenciesConstructorSpy(...args);
   }
 }

@@ -185,7 +185,7 @@ describe('DependencyInjection', function() {
         it('should throw an error with the name of the missing token', function() {
           expect(function() {
             bootstrap(ClassWithDecoratedDependency);
-          }).to.throw(Error, `Dependency 'Symbol(providedDependency)' could not be found.`);
+          }).to.throw(Error, `Dependency 'providedDependency' could not be found.`);
         });
       });
 
@@ -303,8 +303,8 @@ describe('DependencyInjection', function() {
       context('with no provide method', function() {
         it('should throw an error', function() {
           expect(function() {
-            provide(Symbol('should fail'), {});
-          }).to.throw(Error, `No provide method has been chosen, cannot provide dependency 'Symbol(should fail)'`);
+            provide('should fail', {});
+          }).to.throw(Error, `No provide method has been chosen, cannot provide dependency 'should fail'`);
         });
       });
     });

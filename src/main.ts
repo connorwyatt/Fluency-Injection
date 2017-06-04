@@ -1,3 +1,5 @@
+/// <reference path='./references.d.ts' />
+
 import 'reflect-metadata';
 
 let dependencyStore: Map<any, DependencyDefinition> = new Map<any, DependencyDefinition>();
