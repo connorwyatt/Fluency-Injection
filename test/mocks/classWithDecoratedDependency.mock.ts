@@ -7,6 +7,7 @@ export const classWithDecoratedDependencyConstructorSpy: SinonSpy = spy();
 @Injectable
 export class ClassWithDecoratedDependency {
   constructor(@Inject(ProvidedDependencyToken) providedDependency: any) {
-    classWithDecoratedDependencyConstructorSpy(...arguments);
+    const args = arguments as any;
+    classWithDecoratedDependencyConstructorSpy(...args);
   }
 }

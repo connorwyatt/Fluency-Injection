@@ -6,6 +6,7 @@ export const classWithNoDependencyConstructorSpy: SinonSpy = spy();
 @Injectable
 export class ClassWithNoDependency {
   constructor() {
-    classWithNoDependencyConstructorSpy(...arguments);
+    const args = arguments as any;
+    classWithNoDependencyConstructorSpy(...args);
   }
 }

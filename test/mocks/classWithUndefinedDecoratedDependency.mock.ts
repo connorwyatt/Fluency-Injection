@@ -6,6 +6,7 @@ export const classWithUndefinedDecoratedDependencyConstructorSpy: SinonSpy = spy
 @Injectable
 export class ClassWithUndefinedDecoratedDependency {
   constructor(@Inject(undefined) providedDependency: any) {
-    classWithUndefinedDecoratedDependencyConstructorSpy(...arguments);
+    const args = arguments as any;
+    classWithUndefinedDecoratedDependencyConstructorSpy(...args);
   }
 }
